@@ -64,27 +64,34 @@ def trans(t):
         tlh3d = np.hstack((zv, rh))
         return tlh3d
 
-def inverse(z):
-    print("")
-
+l = 0.6
+l1 = 0.5
+l2 = 0.5
+h = 0.2
+a = 0.1
+b = 0.1
 
 print("Aufgabe 1.1")
 print("2.1")
 matrixAB = trans((-2, 0, 0)).dot(rot2trans(rotz(math.pi)))
 print(matrixAB)
 
+print("2.2")
+
+print("2.3")
+
 print("Aufgabe 2")
 print("a)\n")
 matrixA = trans((2, 1, 0.1)).dot(rot2trans(rotz(math.pi/6)))
-matrixB = trans((0.3 - 0.05, 0, 0.2))
+matrixB = trans(((l/2) - 0.05, 0, 0.2))
 matrixC = trans((0, 0, 0.05)).dot(rot2trans(rotz(math.pi/4.5))).dot(rot2trans(rotx(math.pi/2)))
 matrixD = trans((0, 0, 0.05)).dot(rot2trans(rotz(math.pi/6))).dot(trans((0.5, 0, 0)))
 matrixE = rot2trans(rotz((-1)*math.pi/18)).dot(trans((0.5, 0, 0)))
 
-matrixOP = matrixA.dot(matrixB).dot(matrixC).dot(matrixD).dot(matrixE).dot(([0], [0], [0], [1]))
+matrixP_O = matrixA.dot(matrixB).dot(matrixC).dot(matrixD).dot(matrixE).dot(([0], [0], [0], [1]))
 
-print("MatrixOP: ")
-print(matrixOP)
+print("MatrixP_O: ")
+print(matrixP_O)
 
 print("\nb)")
 matrixB = trans((0.3, 0, 0.2))
@@ -92,9 +99,64 @@ matrixC = rot2trans(rotz(math.pi/4.5)).dot(rot2trans(rotx(math.pi/2)))
 matrixD = rot2trans(rotz(math.pi/6)).dot(trans((0.5, 0, 0)))
 matrixE = rot2trans(rotz((-1)*math.pi/18)).dot(trans((0.5, 0, 0)))
 
-matrixOP = matrixB.dot(matrixC).dot(matrixD).dot(matrixE).dot(([0], [0], [0], [1]))
+matrixP_R = matrixB.dot(matrixC).dot(matrixD).dot(matrixE).dot(([0], [0], [0], [1]))
 
-print("Punkt P: ")
-print(matrixOP)
+print("Punkt P_R: ")
+print(matrixP_R)
+
+
+a = 0
+b = 0
+
+def invKinematik(point):
+    # Punktkoordinaten im KS R (entsprechend Aufgabe 2.5: x_F, y_F)
+    x = point[0]
+    print("x: ", x)
+    y = point[1]
+    print("y: ", y)
+
+
+    # Punktkoordinaten von R in DB wechseln für alpha
+    Trans_RDB2 = trans((-(l / 2), 0, -h))
+    P_DB = Trans_RDB2.dot(point)
+
+    print("P_DB:")
+    print(P_DB)
+    x_DB = P_DB[0]
+    y_DB = P_DB[1]
+
+    alpha = math.atan2(y_DB, x_DB)
+    print("alpha: ", math.degrees(alpha))
+
+
+    # Punktkoordinaten von R in D wechseln für beta
+    Trans_RDB3 = trans((np.array([[(l / 2) - (a / 2)], [0], [h]])))
+    T_DBD3 = trans(np.array([[0], [0], [b / 2]])).dot(rot2trans(rotz(math.radians(40)))).dot(rot2trans(rotx(math.pi/2)))
+
+    P_D = Trans_RDB3.dot(T_DBD3).dot(point)
+
+    x_D = P_D[0, 0]
+    y_D = P_D[1, 0]
+
+    f = math.sqrt(x_D**2 + y_D**2) # entsprechend A2.5: a = sqrt(x_F² + y_F²)
+    print("f: ", f)
+
+    c = (f**2 - l1**2 - l2**2 ) / 2*l1 # entsprechend A2.5: c = (a² - a1² - a2²) | 2a1 ; hier: c = c, a = f, a1 = l1, a2 = l2
+    print("c: ", c)
+
+    d = math.sqrt(l2**2-c**2) # entsprechend A2.5: b = sqrt(a2² - c²) | hier: b = d, a2 = l2, c = c
+    print("d: ", d)
+    beta2_neu = math.atan2(d, c) # entsprechend A2.5: theta2 = atan2(b, c) | hier: theta2 = beta2_neu
+
+    print("beta2: ", math.degrees(beta2_neu))
+    beta1_neu = math.atan2(y_D, x_D) + math.atan2(d, l1 + c)    # entsprechend A2.5: theta1 = gamma1 + gamma2,  gamma1 = atan2(y_F, x_F), gamma2 = atan2(b, a1 + c)
+                                                                # hier: theta1 = beta1_neu | gamma1 = math.atan2(y, x), gamma2 = math.atan2(d, l1 + c)
+    print("beta1: ", math.degrees(beta1_neu))
+
+matrixP = ([matrixP_R[0]],[matrixP_R[1]], [0], [1])
+
+inv = invKinematik(matrixP)
+
+print(inv)
 
 print("\nc)")
