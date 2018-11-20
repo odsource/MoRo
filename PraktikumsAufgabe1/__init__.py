@@ -117,8 +117,8 @@ def invKinematik(point):
 
 
     # Punktkoordinaten von R in DB wechseln für alpha
-    Trans_RDB2 = trans((-(l / 2), 0, -h))
-    P_DB = Trans_RDB2.dot(point)
+    Trans_DB2R = trans((-(l / 2), 0, -h))
+    P_DB = Trans_DB2R.dot(point)
 
     print("P_DB:")
     print(P_DB)
@@ -130,13 +130,13 @@ def invKinematik(point):
 
 
     # Punktkoordinaten von R in D wechseln für beta
-    Trans_RDB3 = trans((np.array([[(l / 2) - (a / 2)], [0], [h]])))
-    T_DBD3 = trans(np.array([[0], [0], [b / 2]])).dot(rot2trans(rotz(math.radians(40)))).dot(rot2trans(rotx(math.pi/2)))
+    Trans_RDB3 = trans(((l / 2) - (a / 2), 0, h))
+    Trans_DBD3 = trans((0, 0, b / 2)).dot(rot2trans(rotz(math.radians(40)))).dot(rot2trans(rotx(math.pi/2)))
 
-    P_D = Trans_RDB3.dot(T_DBD3).dot(point)
+    P_D = Trans_RDB3.dot(Trans_DBD3).dot(point)
 
-    x_D = P_D[0, 0]
-    y_D = P_D[1, 0]
+    x_D = P_D[0]
+    y_D = P_D[1]
 
     f = math.sqrt(x_D**2 + y_D**2) # entsprechend A2.5: a = sqrt(x_F² + y_F²)
     print("f: ", f)
