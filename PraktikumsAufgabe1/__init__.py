@@ -126,7 +126,7 @@ def invKinematik(point):
     print(P_DB)
 
     alpha = math.atan2(y_DB, x_DB)
-    #print("alpha: ", math.degrees(alpha))
+    print("alpha: ", math.degrees(alpha))
 
     # Beta2
     Rot_DB = rot2trans(rotz(-alpha))
@@ -140,7 +140,7 @@ def invKinematik(point):
     #print("x_D: ", x_D)
     #print("z_D: ", z_D)
 
-    V_DB_P =x_D**2 + z_D**2  # selbe Höhe wie DB, aber selbe x- + y-Koordinate wie P --> rechter Winkel bei Dreieck zwischen DB, P, P1
+    V_DB_P =x_D**2 + z_D**2
     beta2 = -math.acos((V_DB_P - l1**2 - l2**2) / (2*l1*l2))
 
     # Beta1
