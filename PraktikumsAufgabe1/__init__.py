@@ -104,59 +104,66 @@ matrixP_R = matrixB.dot(matrixC).dot(matrixD).dot(matrixE).dot(([0], [0], [0], [
 print("Punkt P_R: ")
 print(matrixP_R)
 
-
 a = 0
 b = 0
-
 def invKinematik(point):
     # Punktkoordinaten im KS R (entsprechend Aufgabe 2.5: x_F, y_F)
     x = point[0]
-    print("x: ", x)
+    #print("x: ", x)
     y = point[1]
-    print("y: ", y)
+    #print("y: ", y)
 
 
-    # Punktkoordinaten von R in DB wechseln für alpha
+    # Alpha
     Trans_DB2R = trans((-(l / 2), 0, -h))
     P_DB = Trans_DB2R.dot(point)
 
-    print("P_DB:")
-    print(P_DB)
+    #print("P_DB:")
+    #print(P_DB)
     x_DB = P_DB[0]
     y_DB = P_DB[1]
+    print("P_DB: ")
+    print(P_DB)
 
     alpha = math.atan2(y_DB, x_DB)
-    print("alpha: ", math.degrees(alpha))
+    #print("alpha: ", math.degrees(alpha))
 
+    # Beta2
+    Rot_DB = rot2trans(rotz(-alpha))
 
-    # Punktkoordinaten von R in D wechseln für beta
-    Trans_RDB3 = trans(((l / 2) - (a / 2), 0, h))
-    Trans_DBD3 = trans((0, 0, b / 2)).dot(rot2trans(rotz(math.radians(40)))).dot(rot2trans(rotx(math.pi/2)))
+    P_D = Rot_DB.dot(P_DB)
 
-    P_D = Trans_RDB3.dot(Trans_DBD3).dot(point)
+    print("P_D: ", P_D)
 
     x_D = P_D[0]
-    y_D = P_D[1]
+    z_D = P_D[2]
+    #print("x_D: ", x_D)
+    #print("z_D: ", z_D)
 
-    f = math.sqrt(x_D**2 + y_D**2) # entsprechend A2.5: a = sqrt(x_F² + y_F²)
-    print("f: ", f)
+    V_DB_P =x_D**2 + z_D**2  # selbe Höhe wie DB, aber selbe x- + y-Koordinate wie P --> rechter Winkel bei Dreieck zwischen DB, P, P1
+    beta2 = -math.acos((V_DB_P - l1**2 - l2**2) / (2*l1*l2))
 
-    c = (f**2 - l1**2 - l2**2 ) / 2*l1 # entsprechend A2.5: c = (a² - a1² - a2²) | 2a1 ; hier: c = c, a = f, a1 = l1, a2 = l2
-    print("c: ", c)
+    # Beta1
+    gamma1 = math.asin(l2*math.sin(beta2)/math.sqrt(V_DB_P))
+    gamma2 = math.atan2(z_D, x_D)
 
-    d = math.sqrt(l2**2-c**2) # entsprechend A2.5: b = sqrt(a2² - c²) | hier: b = d, a2 = l2, c = c
-    print("d: ", d)
-    beta2_neu = math.atan2(d, c) # entsprechend A2.5: theta2 = atan2(b, c) | hier: theta2 = beta2_neu
+    beta1 = math.atan2(z_D, x_D) + math.asin(l2*math.sin(-beta2)/math.sqrt(V_DB_P))
 
-    print("beta2: ", math.degrees(beta2_neu))
-    beta1_neu = math.atan2(y_D, x_D) + math.atan2(d, l1 + c)    # entsprechend A2.5: theta1 = gamma1 + gamma2,  gamma1 = atan2(y_F, x_F), gamma2 = atan2(b, a1 + c)
-                                                                # hier: theta1 = beta1_neu | gamma1 = math.atan2(y, x), gamma2 = math.atan2(d, l1 + c)
-    print("beta1: ", math.degrees(beta1_neu))
+    print("Beta2 : ", math.degrees(beta2))
+    print("Beta1: ", math.degrees(beta1))
 
-matrixP = ([matrixP_R[0]],[matrixP_R[1]], [0], [1])
+    return alpha, beta1, beta2
+
+
+matrixP = ([matrixP_R[0]],[matrixP_R[1]], [matrixP_R[2]], [1])
 
 inv = invKinematik(matrixP)
 
 print(inv)
 
-print("\nc)")
+#print("\nc)")
+
+#punktarray = []
+
+#for punkt in punktarray:
+#    invKinematik(punkt)
