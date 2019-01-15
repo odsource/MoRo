@@ -14,7 +14,7 @@ def curveDrive(robot, v, r, deltaTheta):
     # Kreisfahrt aus demo_Simulator_1.py
     #############################################
 
-    n = 1000
+    n = 100
 
     motionCircle = []
 
