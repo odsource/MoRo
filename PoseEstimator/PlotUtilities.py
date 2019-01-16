@@ -90,7 +90,7 @@ def plotPositions(poses, color = 'b'):
 # --------
 # plot pose particles with orientation
 #
-def plotPoseParticles(poseList, l = 0.1, color = 'b'):
+def plotPoseParticles(poseList, l=0.1, color='b'):
     x = [0,0]
     y = [0,0]
     for p in poseList:
