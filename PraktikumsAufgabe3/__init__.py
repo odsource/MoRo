@@ -3,7 +3,7 @@ import random
 import numpy as np
 
 from PoseEstimator.PlotUtilities import plotPoseParticles, plotShow
-from Robot_Simulator_V2 import simpleWorld, Robot
+from Robot_Simulator_V2 import simpleWorld, Robot, SensorUtilities
 
 
 class ParticleFilterPoseEstimator:
@@ -78,13 +78,49 @@ class ParticleFilterPoseEstimator:
         self.particles[i][2] = (theta + dTheta)%(2*np.pi)
 
     def integrateMeasurement(self, dist_list, alpha_list, distantMap):
-        print("")
+        # Likelihood-Algorithmus
+        weighedParticle = []
+        # Obstacle-Koordinaten aus Sicht des KS des Partikels
+        for particle in self.particles:
+            p = 1
+            globalCoObPaDi = []
+            for i in range(len(dist_list)):
+                d = dist_list[i]
+                if d == None:
+                    continue
+                alpha = alpha_list[i]
+                x_local = d * np.cos(alpha)
+                y_local = d * np.sin(alpha)
+                x_global = particle[0] + x_local * np.cos(particle[2]) - y_local * np.sin(particle[2])
+                y_global = particle[1] + x_local * np.sin(particle[2]) + y_local * np.cos(particle[2])
+                globalCoObPaDi.append([x_global, y_global])
+        # Obstacle-Koordinatenberechnung fertig
+
+        # Gewichtung der Partikel
+            for obstacleCoord in globalCoObPaDi:
+                xDist = obstacleCoord[0] - distantMap.getValue(obstacleCoord[0])
+                yDist = obstacleCoord[1] - distantMap.getValue(obstacleCoord[1])
+                p = p * self._ndf(0, [xDist, yDist], 0.5 ** 2)
+            weighedParticle.append(particle, p)
+
+        # Resampling Folie 5-54
+        # for i = 1 to M do
+        # ziehe i zufällig mit Wahrscheinlichkeit wi;
+        # ck + 1 = ck + 1 schnitt {xk + 1[i]};
+        # endfor
+
+
+
+    # 1-dimensional normal distribution N(mu, sigma2)
+    def _ndf(self, x, mu, sigma2):
+        c = 1/(np.sqrt(2*sigma2*np.pi))
+        return c*np.exp(-0.5 * (x-mu)**2 / sigma2)
 
     def getPose(self):
-        print("")
+        return np.mean(self.Particles, axis=0)
 
     def getCovariance(self):
-        print("")
+        return np.cov(self.Particles[:, :3].T)
 
 
 def curveDrive(robot, v, r, deltaTheta):
@@ -131,7 +167,7 @@ plotPoseParticles(poseEstimator.particles, color='g')
 poseEstimator.integrateMovement(poseEstimator, [1, -np.pi / 2])
 plotPoseParticles(poseEstimator.particles, color='y')
 poseEstimator.integrateMovement(poseEstimator, [1, -np.pi / 2])
-#plotPoseParticles(poseEstimator.particles, color='r')
+plotPoseParticles(poseEstimator.particles, color='r')
 poseEstimator.integrateMovement(poseEstimator, [1, -np.pi / 2])
 poseEstimator.integrateMovement(poseEstimator, [1, -np.pi / 2])
 poseEstimator.integrateMovement(poseEstimator, [1, -np.pi / 2])
@@ -149,7 +185,7 @@ poseEstimator.integrateMovement(poseEstimator, [1, -np.pi / 2])
 poseEstimator.integrateMovement(poseEstimator, [1, -np.pi / 2])
 poseEstimator.integrateMovement(poseEstimator, [1, -np.pi / 2])
 
-#plotPoseParticles(poseEstimator.particles)
+plotPoseParticles(poseEstimator.particles)
 plotShow()
 
 #curveDrive(myRobot, 100, 5, -180)
