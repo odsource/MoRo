@@ -1,5 +1,5 @@
 import numpy as np
-from Robot_Simulator_V2 import emptyWorld, Robot
+from Robot_Simulator_V2 import emptyWorld, Robot, World
 
 
 def curveDrive(robot, v, r, deltaTheta):
@@ -79,6 +79,16 @@ def spurWechsel(myRobot):
     straightDrive(myRobot, 1, 1)
 
 
+def followLine(myRobot, p1, p2):
+    (x1, y1) = p1
+    (x2, y2) = p2
+    l = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+    nv = np.array([[-(x2 - x1)], [y2 - y1]])
+
+    pose = World.getTrueRobotPose()
+
+
 print("Aufgabe 1: \n")
 myWorld = emptyWorld.buildWorld()
 myRobot = Robot.Robot()
@@ -87,6 +97,7 @@ myWorld.setRobot(myRobot, [2, 5.5, np.pi / 2])
 #kreisFahrt(myRobot)
 #rechteckFahrt(myRobot)
 spurWechsel(myRobot)
+followLine(myRobot, [0, 5], [5, 0])
 
 myWorld.close()
 
