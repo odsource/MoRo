@@ -44,6 +44,9 @@ class Robot:
         self._landmarks = []  # landmark positions
         self._senseNoiseLandmarks = 0.1  # standard deviation of distance measurement
 
+    def getWorld(self):
+        return self._world
+
     def getTimeStep(self):
         return self._T
 

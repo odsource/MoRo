@@ -79,26 +79,26 @@ def spurWechsel(myRobot):
     straightDrive(myRobot, 1, 1)
 
 
-def followLine(myRobot, myWorld, p1, p2):
-    (x1, y1) = p1
-    (x2, y2) = p2
-    l = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
-    kp = -0.5
+#def followLine(myRobot, myWorld, p1, p2):
+#    (x1, y1) = p1
+#    (x2, y2) = p2
+#    l = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+#    kp = -0.5
 
-    nv = np.array([-(x2 - x1), y2 - y1])
-    (x, y, thetaR) = myWorld.getTrueRobotPose()
-    rv = np.array([x, y])
-    d = nv.dot(rv)
-    theta = d * kp
-    dp = 1000000
+#    nv = np.array([-(x2 - x1), y2 - y1])
+#    (x, y, thetaR) = myWorld.getTrueRobotPose()
+#    rv = np.array([x, y])
+#    d = nv.dot(rv)
+#    theta = d * kp
+#    dp = 1000000
 
-    while(True):
-        curveDrive(myRobot, 1, 2, theta)
-        nv = np.array([-(x2 - x1), y2 - y1])
-        (x, y, thetaR) = myWorld.getTrueRobotPose()
-        rv = np.array([x, y])
-        d = nv.dot(rv)
-        theta = d * kp
+#    while(True):
+#        curveDrive(myRobot, 1, 2, theta)
+#        nv = np.array([-(x2 - x1), y2 - y1])
+#        (x, y, thetaR) = myWorld.getTrueRobotPose()
+#        rv = np.array([x, y])
+#        d = nv.dot(rv)
+#        theta = d * kp
 
 print("Aufgabe 1: \n")
 myWorld = emptyWorld.buildWorld()
@@ -108,7 +108,7 @@ myWorld.setRobot(myRobot, [2, 5.5, np.pi / 2])
 #kreisFahrt(myRobot)
 #rechteckFahrt(myRobot)
 #spurWechsel(myRobot)
-followLine(myRobot, myWorld, [0, 0], [20, 20])
+#followLine(myRobot, myWorld, [0, 0], [20, 20])
 
 myWorld.close()
 
